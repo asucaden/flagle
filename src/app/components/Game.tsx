@@ -1,12 +1,13 @@
 "use client";
-
-import answers from "public/answers.json";
-import countries from "public/countries.json";
-import formatGuess from "src/util/calcGeography.ts";
-
+import _answers from "../../../public/answers.json";
+import _countries from "../../../public/countries.json";
+import { formatGuess, FormattedGuess } from "../../util/calcGeography";
 import { useState } from "react";
 
-const Victory = ({ guesses }) => {
+const answers = _answers as { [key: string]: string };
+const countries = _countries as { [key: string]: string };
+
+const Victory = ({ guesses }: { guesses: FormattedGuess[] }) => {
   return (
     <div className="py-[200px] bg-blue-800 text-4xl">
       You won! It took you {guesses.length} guesses. Share with your friends
@@ -15,7 +16,7 @@ const Victory = ({ guesses }) => {
   );
 };
 
-const Flag = ({ answer }) => {
+const Flag = ({ answer }: { answer: string }) => {
   return (
     <div>
       <img
@@ -27,9 +28,9 @@ const Flag = ({ answer }) => {
   );
 };
 
-const GuessRow = ({ onGuess }) => {
+const GuessRow = ({ onGuess }: { onGuess: (userGuess: string) => void }) => {
   const [inputValue, setInputValue] = useState("");
-  const handleClick = (i) => {
+  const handleClick = (i: React.MouseEvent) => {
     console.log("handleclick" + inputValue);
     onGuess(inputValue);
   };
@@ -42,6 +43,7 @@ const GuessRow = ({ onGuess }) => {
       />
       <button
         className="flex-auto w-20 bg-green-800 text-white mx-5 border-2 border-black shadow-2xl"
+        type="button"
         onClick={handleClick}
       >
         Submit
@@ -49,7 +51,8 @@ const GuessRow = ({ onGuess }) => {
     </div>
   );
 };
-const PrevGuess = ({ guess }) => (
+
+const PrevGuess = ({ guess }: { guess: FormattedGuess }) => (
   <div
     className="grid grid-cols-4 bg-cyan-700 text-white border-4 border-cyan-900"
     key="{guess.name}"
@@ -61,32 +64,32 @@ const PrevGuess = ({ guess }) => (
   </div>
 );
 
-function PrevGuesses({ guesses }) {
-  const history = [];
+function PrevGuesses({ guesses }: { guesses: FormattedGuess[] }) {
+  const history: React.JSX.Element[] = [];
   guesses.forEach((guess) => history.push(<PrevGuess guess={guess} />));
 
   return <div className="container grid grid-rows-6 gap-4">{history}</div>;
 }
 
 const Game = () => {
-  const [guesses, setGuesses] = useState([]);
+  const [guesses, setGuesses] = useState<FormattedGuess[]>([]);
   const [won, setWon] = useState(false);
 
   const date = getDate();
-  const answer = answers[date];
-  const handleGuess = (userGuess) => {
+  const answer: string | undefined = answers[date];
+  const handleGuess = (userGuess: string) => {
     console.log("handleGuess" + userGuess);
     //Validate guess
-    const guessAbr = Object.keys(countries).find(
+    const guessAbr: string | undefined = Object.keys(countries).find(
       (key) => countries[key] === userGuess
     );
     if (!guessAbr) {
-      return <div>Guess wasn't valid</div>;
+      console.log("Invalid guess");
+      return;
     }
-
     //Add guess to guess history
     if (guesses.length > 10) return;
-    const validGuess = abrToGuess(guessAbr, answer);
+    const validGuess: FormattedGuess = formatGuess(guessAbr, answer);
     setGuesses([validGuess, ...guesses]);
 
     //Check is user won. If yes, display you won message
@@ -120,7 +123,4 @@ const getDate = () => {
   return `${mm}/${dd}/${yyyy}`;
 };
 
-const abrToGuess = (guessAbr, answerAbr) => {
-  return formatGuess(guessAbr, answerAbr);
-};
 export default Game;

@@ -1,9 +1,14 @@
 // Source:
 // Coordinates => https://developers.google.com/public-data/docs/canonical/countries_csv
 
-import countries from "public/countries.json";
-import coordinates from "public/coordinates.json";
+import _coordinates from "../../public/coordinates.json";
+import _countries from "../../public/countries.json";
 import * as geolib from "geolib";
+
+const coordinates = _coordinates as {
+  [key: string]: { latitude: number; longitude: number; name: string };
+};
+const countries = _countries as { [key: string]: string };
 
 const arrows = {
   E: "➡️",
@@ -24,7 +29,14 @@ const arrows = {
   WSW: "↙️",
 };
 
-const formatGuess = (guessAbr, answerAbr) => {
+interface FormattedGuess {
+  name: string;
+  distance: number;
+  percentage: number;
+  direction: string;
+}
+
+const formatGuess = (guessAbr: string, answerAbr: string): FormattedGuess => {
   const guessedCoords = coordinates[guessAbr];
   const answerCoords = coordinates[answerAbr];
 
@@ -40,4 +52,5 @@ const formatGuess = (guessAbr, answerAbr) => {
   return { name, distance, percentage, direction };
 };
 
-export default formatGuess;
+export { formatGuess };
+export type { FormattedGuess };

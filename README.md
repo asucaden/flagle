@@ -1,7 +1,7 @@
 ## FLAGLE
 
-# It's like Worldle, but for flags
+It's like Worldle, but for flags
 
-# Strongly influenced by https://worldle.teuteuf.fr/
+Strongly influenced by https://worldle.teuteuf.fr/
 
-# Not in production yet
+Not in production yet
