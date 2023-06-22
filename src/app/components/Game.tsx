@@ -13,7 +13,6 @@ import Victory from "./Victory";
 import InputGuess from "./InputGuess";
 import { PrevGuesses } from "./StoredGuesses";
 import { Flag } from "./Flag";
-import { count } from "console";
 
 const countries = _countries as Countries;
 
@@ -28,9 +27,10 @@ const Game = () => {
 
   const handleGuess = (userGuess: string) => {
     console.log("handleGuess" + userGuess);
+
     //Validate guess
     const guessAbr: string | undefined = Object.keys(countries).find(
-      (key) => countries[key].name === userGuess
+      (key) => normalizeName(countries[key].name) === normalizeName(userGuess)
     );
     if (!guessAbr || !currAnswer) {
       console.log("Invalid guess");
